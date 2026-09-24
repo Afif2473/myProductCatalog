@@ -106,7 +106,7 @@ flutter test
 
 ## 🎥 Video Walkthrough Supplement
 
-> **Note on Video Time-Box:** To respect the strict **5-minute time limit** for the video submission, the screen recording covers the **live application demo**, the **Clean Architecture file structure**, and the primary **Pagination Append Logic (Section 3 Part A)**. Below is the technical breakdown of the remaining architectural decisions and edge-case handling.
+> **Note on Video Time-Box:** To respect the strict **5-minute time limit** for the video submission, the screen recording covers the **live application demo**, the **Clean Architecture file structure**, and the primary **Pagination Append Logic**. Below is the technical breakdown of the remaining architectural decisions and edge-case handling.
 
 ### 1. Native 300ms Debounce Transformer on Search
 - **File & Lines:** [`lib/presentation/bloc/product_bloc.dart` (lines 9–29)](lib/presentation/bloc/product_bloc.dart#L9-L29)
