@@ -103,3 +103,28 @@ flutter test
 - `test/presentation/pages/product_detail_page_test.dart`: Widget test verifying product detail specifications.
 
 ---
+
+## 🎥 Video Walkthrough Supplement
+
+> **Note on Video Time-Box:** To respect the strict **5-minute time limit** for the video submission, the screen recording covers the **live application demo**, the **Clean Architecture file structure**, and the primary **Pagination Append Logic (Section 3 Part A)**. Below is the technical breakdown of the remaining architectural decisions and edge-case handling.
+
+### 1. Native 300ms Debounce Transformer on Search
+- **File & Lines:** [`lib/presentation/bloc/product_bloc.dart` (lines 9–29)](lib/presentation/bloc/product_bloc.dart#L9-L29)
+- **Technique:** Implemented a custom `EventTransformer` using pure Dart `Stream.multi` and `Timer` rather than importing external stream libraries.
+- **Why Server-Side Search Endpoint over Client-Side Filtering:** Client-side filtering can only filter products already fetched in memory (e.g. the first 20 items), whereas the server-side Search API (`/products/search?q={query}`) queries DummyJSON's entire product database.
+- **Analogy:** *Think of an elevator door with a motion sensor. If passengers keep stepping through, the door timer resets. Only after everyone pauses does the door close. The debounce transformer cancels pending timers on each keystroke and only dispatches the search event after 300ms of inactivity.*
+
+### 2. Defensive JSON Parsing (Edge Case Handling)
+- **File & Lines:** [`lib/data/models/product_model.dart` (lines 17–33)](lib/data/models/product_model.dart#L17-L33)
+- **Technique:** Numerical attributes use `(json['price'] as num?)?.toDouble() ?? 0.0` and `(json['stock'] as num?)?.toInt() ?? 0`.
+- **Why:** Real-world REST APIs frequently return integers (e.g., `10`) instead of floating-point numbers (`10.0`). Casting directly with `json['price'] as double` causes runtime `_TypeError` exceptions. Casting to `num` first guarantees safe conversion.
+
+### 3. User-Centric Error Recovery & Resilience
+- **File & Lines:** [`lib/presentation/widgets/error_view.dart` (lines 34–45)](lib/presentation/widgets/error_view.dart#L34-L45)
+- **Technique:** Dedicated `ErrorView` component with an explicit `Retry` callback button that re-fires `GetProductsEvent()`.
+- **Why:** In mobile banking and enterprise applications, network dropouts should never force the user to kill and restart the app. An inline retry maintains session context and allows seamless recovery.
+
+### 4. Image Caching & Memory Efficiency
+- **File & Lines:** [`lib/presentation/widgets/product_card.dart` (lines 33–50)](lib/presentation/widgets/product_card.dart#L33-L50)
+- **Technique:** Thumbnail images wrapped with `CachedNetworkImage` with disk/memory caching and fallback error icons.
+- **Why:** Prevents duplicate network downloads as users scroll up and down the list, lowering battery and bandwidth consumption.
